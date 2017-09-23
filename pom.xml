@@ -20,7 +20,6 @@
 		<version.plugin.shade>3.1.0</version.plugin.shade>
 		<version.plugin.commit>2.2.3</version.plugin.commit>
 
-
 		<relocation-package>${project.groupId}.${project.artifactId}.lib</relocation-package>
 	</properties>
 
