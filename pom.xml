@@ -20,7 +20,7 @@
 		<version.plugin.shade>3.1.0</version.plugin.shade>
 		<version.plugin.commit>2.2.3</version.plugin.commit>
 
-		<relocation-package>${project.groupId}.${project.artifactId}.lib</relocation-package>
+		<relocation-package>${project.groupId}.lib</relocation-package>
 	</properties>
 
 	<repositories>
@@ -106,6 +106,12 @@
 				<version>${version.plugin.jar}</version>
 				<configuration>
 					<finalName>${project.name}-${version.build}</finalName>
+					
+					<archive>
+						<manifestEntries>
+							<SCM-Revision>${git.commit.id.describe-short}</SCM-Revision>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 
@@ -128,7 +134,7 @@
 						</relocation>
 						<relocation>
 							<pattern>org.inventivetalent</pattern>
-							<shadedPattern>${relocation-package}.spiget-update</shadedPattern>
+							<shadedPattern>${relocation-package}.spiget</shadedPattern>
 						</relocation>
 					</relocations>
 				</configuration>
