@@ -1,0 +1,5 @@
+name: ${project.name}
+version: ${version.build}
+description: ${project.description}
+authors: [Crypnotic]
+main: ${project.groupId}.Empires
