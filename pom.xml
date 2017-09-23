@@ -105,7 +105,7 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>${version.plugin.jar}</version>
 				<configuration>
-					<finalName>${project.name}-${version-build}</finalName>
+					<finalName>${project.name}-${version.build}</finalName>
 				</configuration>
 			</plugin>
 
@@ -155,10 +155,7 @@
 				</executions>
 
 				<configuration>
-					<commitIdGenerationMode>flat</commitIdGenerationMode>
-					<gitDescribe>
-						<skip>true</skip>
-					</gitDescribe>
+					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
