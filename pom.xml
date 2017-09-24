@@ -13,7 +13,7 @@
 		<version.placeholder>2.8.2</version.placeholder>
 		<version.bstats>1.2</version.bstats>
 		<version.spiget-update>1.4.0</version.spiget-update>
-		<version.lombok>1.16.18</version.lombok>
+		<version.lombok>1.16.16</version.lombok>
 
 		<version.plugin.compiler>3.7.0</version.plugin.compiler>
 		<version.plugin.jar>3.0.2</version.plugin.jar>
@@ -64,12 +64,14 @@
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
 			<version>${version.bstats}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.inventivetalent.spiget-update</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>${version.spiget-update}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
