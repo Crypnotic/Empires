@@ -72,10 +72,14 @@ public class ConfigManager {
 						output.close();
 					}
 
-					configs.put(type, new Config(file, YamlConfiguration.loadConfiguration(file)));
 				} catch (IOException exception) {
 					exception.printStackTrace();
 				}
+			}
+			try {
+				configs.put(type, new Config(file, YamlConfiguration.loadConfiguration(file)));
+			} catch (IllegalArgumentException exception) {
+				exception.printStackTrace();
 			}
 		}
 		return configs.values();

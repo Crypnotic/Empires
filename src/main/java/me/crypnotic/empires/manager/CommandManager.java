@@ -63,9 +63,7 @@ public class CommandManager implements CommandExecutor {
 				String subcommand = args[0].toLowerCase();
 				if (commands.containsKey(subcommand)) {
 					String[] arguments = new String[args.length - 1];
-					for (int i = 1; i < args.length; i++) {
-						args[i] = arguments[i - 1];
-					}
+					System.arraycopy(args, 1, arguments, 0, arguments.length);
 					commands.get(subcommand).execute(player, new CommandContext(arguments));
 				} else {
 					commands.get("help").execute(player, null);

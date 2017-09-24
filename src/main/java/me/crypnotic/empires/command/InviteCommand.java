@@ -41,26 +41,30 @@ public class InviteCommand implements ICommand {
 					Player targetPlayer = getPlayer(context.get(0));
 					if (targetPlayer != null) {
 						EmpirePlayer target = getPlayerManager().get(targetPlayer.getUniqueId());
-						if (target.getEmpire() == null) {
-							if (!empire.equals(target.getEmpire())) {
-								empire.addInvite(target);
+						if (player.equals(target)) {
+							if (target.getEmpire() == null) {
+								if (!empire.equals(target.getEmpire())) {
+									empire.addInvite(target);
 
-								target.message(
-										"&a" + player.getName() + " &einvited you to join &c" + empire.getName());
-								target.message("&eType: &a/empire join " + empire.getName()
-										+ " &e in the next 60 seconds to join.");
-								player.message("&eSuccessfully invited &a" + target.getName());
+									target.message(
+											"&a" + player.getName() + " &einvited you to join &c" + empire.getName());
+									target.message("&eType: &a/empire join " + empire.getName()
+											+ " &e in the next 60 seconds to join.");
+									player.message("&eSuccessfully invited &a" + target.getName());
 
-								getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> {
-									if (empire.getInvites().contains(target)) {
-										empire.removeInvite(target);
-									}
-								}, 1200);
+									getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> {
+										if (empire.getInvites().contains(target)) {
+											empire.removeInvite(target);
+										}
+									}, 1200);
+								} else {
+									player.message("&c" + target.getName() + " is already a part of your empire.");
+								}
 							} else {
-								player.message("&c" + target.getName() + " is already a part of your empire.");
+								player.message("&c" + target.getName() + " is already a part of an empire.");
 							}
 						} else {
-							player.message("&c" + target.getName() + " is already a part of an empire.");
+							player.message("&cYou can't invite yourself to an empire.");
 						}
 					} else {
 						player.message("&cUnknown player: " + context.get(0));

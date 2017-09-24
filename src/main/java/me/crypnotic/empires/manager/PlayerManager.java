@@ -77,9 +77,12 @@ public class PlayerManager {
 
 		EmpirePlayer player = new EmpirePlayer(uuid);
 
+		players.put(uuid, player);
+
 		if (section.contains("empire")) {
 			player.setEmpire(empireManager.getEmpireByName(section.get("empire").asString()));
 		}
+
 		return player;
 	}
 
