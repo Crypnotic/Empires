@@ -24,6 +24,7 @@
 package me.crypnotic.empires.api.empire;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
@@ -51,5 +52,11 @@ public class Territory {
 
 	public boolean isInside(Player player) {
 		return contains(player.getLocation().getChunk());
+	}
+
+	public void forEach(Consumer<Chunk> consumer) {
+		for (Chunk chunk : chunks) {
+			consumer.accept(chunk);
+		}
 	}
 }

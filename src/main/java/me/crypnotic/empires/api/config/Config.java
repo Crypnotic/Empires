@@ -21,27 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.empire;
+package me.crypnotic.empires.api.config;
 
-import java.util.List;
-import java.util.UUID;
+import java.io.File;
+import java.io.IOException;
+
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-public class Empire {
+public class Config extends ConfigSection {
 
 	@Getter
-	private final String name;
+	private final File file;
 	@Getter
-	private final UUID owner;
-	@Getter
-	private final Territory territory;
-	@Getter
-	private final List<UUID> members;
+	private YamlConfiguration config;
 
-	public boolean isMember(UUID uuid) {
-		return owner.equals(uuid) || members.contains(uuid);
+	public Config(File file, YamlConfiguration config) {
+		super(config, "");
+		
+		this.file = file;
+		this.config = config;
+	}
+
+	public boolean save() {
+		try {
+			config.save(file);
+			return true;
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean reload() {
+		try {
+			this.config = YamlConfiguration.loadConfiguration(file);
+			return true;
+		} catch (IllegalArgumentException exception) {
+			exception.printStackTrace();
+		}
+		return false;
 	}
 }

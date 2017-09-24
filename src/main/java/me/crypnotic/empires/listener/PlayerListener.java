@@ -60,6 +60,11 @@ public class PlayerListener implements Listener {
 			return;
 		}
 
+		if (empire.isMember(player.getUniqueId())) {
+			return;
+		}
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler(ignoreCancelled = true)
@@ -71,5 +76,10 @@ public class PlayerListener implements Listener {
 			return;
 		}
 
+		if (empire.isMember(player.getUniqueId())) {
+			return;
+		}
+
+		event.setCancelled(true);
 	}
 }

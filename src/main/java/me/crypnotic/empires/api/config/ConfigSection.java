@@ -23,61 +23,37 @@
  */
 package me.crypnotic.empires.api.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
-public class BaseConfig {
+@RequiredArgsConstructor
+public class ConfigSection {
 
 	@Getter
-	private final File file;
+	private final YamlConfiguration configuration;
 	@Getter
-	private YamlConfiguration config;
+	private final String track;
 
-	public String getString(String path) {
-		return config.getString(path);
+	public ConfigElement get(String path) {
+		return new ConfigElement(configuration.get(track + path));
 	}
 
-	public List<String> getStringList(String path) {
-		return config.getStringList(path);
+	public void set(String path, Object value) {
+		configuration.set(track + path, value);
 	}
 
-	public Double getDouble(String path) {
-		return config.getDouble(path);
+	public ConfigSection getSection(String path) {
+		return new ConfigSection(configuration, track + path);
 	}
 
-	public UUID getUUID(String path) {
-		return null;
-	}
-
-	public List<UUID> getUUIDList(String path) {
-		return null;
-	}
-
-	public boolean save() {
-		try {
-			config.save(file);
-			return true;
-		} catch (IOException exception) {
-			exception.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean reload() {
-		try {
-			this.config = YamlConfiguration.loadConfiguration(file);
-			return true;
-		} catch (IllegalArgumentException exception) {
-			exception.printStackTrace();
-		}
-		return false;
+	public Set<String> getKeys(String path) {
+		ConfigurationSection section = configuration.getConfigurationSection(track + path);
+		return section == null ? new HashSet<String>() : section.getKeys(false);
 	}
 }

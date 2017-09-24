@@ -39,8 +39,8 @@ public class EmpiresPlugin extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
-		this.configManager = new ConfigManager(this, getDataFolder());
-		this.empireManager = new EmpireManager();
+		this.configManager = new ConfigManager(getDataFolder());
+		this.empireManager = new EmpireManager(configManager);
 	}
 
 	@Override

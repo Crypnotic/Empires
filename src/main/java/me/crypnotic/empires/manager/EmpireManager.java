@@ -24,23 +24,58 @@
 package me.crypnotic.empires.manager;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Chunk;
 
+import me.crypnotic.empires.api.Strings;
+import me.crypnotic.empires.api.config.Config;
+import me.crypnotic.empires.api.config.ConfigSection;
+import me.crypnotic.empires.api.config.ConfigType;
 import me.crypnotic.empires.api.empire.Empire;
+import me.crypnotic.empires.api.empire.Territory;
 
 public class EmpireManager {
 
+	private final ConfigManager configManager;
 	private final Map<String, Empire> empires;
 
-	public EmpireManager() {
+	public EmpireManager(ConfigManager configManager) {
+		this.configManager = configManager;
 		this.empires = new HashMap<String, Empire>();
 	}
 
 	public boolean init() {
+		Config config = configManager.get(ConfigType.EMPIRES);
+
+		for (String name : config.getKeys("empires")) {
+			ConfigSection section = config.getSection("empires." + name);
+
+			UUID owner = section.get("owner").asUUID();
+			Territory territory = Strings.parseTerritory(section.get("territory").asStringList());
+			List<UUID> members = section.get("members").asUUIDList();
+
+			Empire empire = new Empire(name, owner, territory, members);
+
+			empires.put(name, empire);
+		}
 
 		return true;
+	}
+
+	public boolean saveEmpire(Empire empire) {
+		String name = empire.getName();
+
+		Config config = configManager.get(ConfigType.EMPIRES);
+		ConfigSection section = config.getSection("empires." + name);
+
+		section.set("owner", Strings.serializeUUID(empire.getOwner()));
+		section.set("territory", Strings.serializeTerritory(empire.getTerritory()));
+		section.set("members", Strings.serializeUUIDList(empire.getMembers()));
+
+		return config.save();
 	}
 
 	public Empire getEmpireByChunk(Chunk chunk) {

@@ -21,27 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.empire;
+package me.crypnotic.empires.api.config;
 
 import java.util.List;
 import java.util.UUID;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.crypnotic.empires.api.Strings;
 
 @RequiredArgsConstructor
-public class Empire {
+public class ConfigElement {
 
-	@Getter
-	private final String name;
-	@Getter
-	private final UUID owner;
-	@Getter
-	private final Territory territory;
-	@Getter
-	private final List<UUID> members;
+	private final Object value;
 
-	public boolean isMember(UUID uuid) {
-		return owner.equals(uuid) || members.contains(uuid);
+	public Object raw() {
+		return value;
+	}
+
+	public Integer asInteger() {
+		return exists() ? null : (Integer) value;
+	}
+
+	public Double asDouble() {
+		return exists() ? null : (Double) value;
+	}
+
+	public String asString() {
+		return exists() ? null : value.toString();
+	}
+
+	public UUID asUUID() {
+		return exists() ? null : Strings.parseUUID(asString());
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> asStringList() {
+		return exists() ? null : (List<String>) value;
+	}
+
+	public List<UUID> asUUIDList() {
+		return exists() ? null : Strings.parseUUIDList(asString());
+	}
+
+	public boolean exists() {
+		return value != null;
 	}
 }

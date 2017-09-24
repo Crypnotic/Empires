@@ -33,23 +33,20 @@ import java.util.Map;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import me.crypnotic.empires.EmpiresPlugin;
-import me.crypnotic.empires.api.config.BaseConfig;
+import me.crypnotic.empires.api.config.Config;
 import me.crypnotic.empires.api.config.ConfigType;
 
 public class ConfigManager {
 
-	private final EmpiresPlugin plugin;
 	private final File directory;
-	private final Map<ConfigType, BaseConfig> configs;
+	private final Map<ConfigType, Config> configs;
 
-	public ConfigManager(EmpiresPlugin plugin, File directory) {
-		this.plugin = plugin;
+	public ConfigManager(File directory) {
 		this.directory = directory;
-		this.configs = new HashMap<ConfigType, BaseConfig>();
+		this.configs = new HashMap<ConfigType, Config>();
 	}
 
-	public Collection<BaseConfig> init() {
+	public Collection<Config> init() {
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}
@@ -61,7 +58,7 @@ public class ConfigManager {
 				try {
 					file.createNewFile();
 
-					InputStream input = plugin.getResource(name);
+					InputStream input = getClass().getResourceAsStream(name);
 					if (input != null) {
 						FileOutputStream output = new FileOutputStream(file);
 
@@ -75,9 +72,7 @@ public class ConfigManager {
 						output.close();
 					}
 
-					YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-
-					configs.put(type, new BaseConfig(file, configuration));
+					configs.put(type, new Config(file, YamlConfiguration.loadConfiguration(file)));
 				} catch (IOException exception) {
 					exception.printStackTrace();
 				}
@@ -86,15 +81,15 @@ public class ConfigManager {
 		return configs.values();
 	}
 
-	public BaseConfig get(ConfigType type) {
+	public Config get(ConfigType type) {
 		return configs.get(type);
 	}
 
 	public void reloadAll() {
-		configs.values().forEach(BaseConfig::reload);
+		configs.values().forEach(Config::reload);
 	}
 
 	public void saveAll() {
-		configs.values().forEach(BaseConfig::save);
+		configs.values().forEach(Config::save);
 	}
 }
