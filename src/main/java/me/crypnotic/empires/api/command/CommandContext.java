@@ -21,43 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.config;
+package me.crypnotic.empires.api.command;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ConfigSection {
+public class CommandContext {
 
-	@Getter
-	private final YamlConfiguration configuration;
-	@Getter
-	private final String track;
+	private final String[] arguments;
 
-	public ConfigElement get(String path) {
-		return new ConfigElement(configuration.get(track + path));
+	public String get(int index) {
+		if (index >= size()) {
+			throw new IllegalArgumentException("Index: " + index + " > Length: " + size());
+		}
+		return arguments[index];
 	}
 
-	public void set(String path, Object value) {
-		configuration.set(track + path, value);
+	public String join(String delimeter) {
+		return join(delimeter, 0);
 	}
 
-	public ConfigSection getSection(String path) {
-		return new ConfigSection(configuration, track + path);
+	public String join(String delimeter, int start) {
+		return join(delimeter, start, size());
 	}
 
-	public Set<String> getKeys(String path) {
-		ConfigurationSection section = configuration.getConfigurationSection(track + path);
-		return section == null ? new HashSet<String>() : section.getKeys(false);
+	public String join(String delimeter, int start, int end) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = start; i < end; i++) {
+			builder.append(get(i));
+			if (i < end) {
+				builder.append(delimeter);
+			}
+		}
+		return builder.toString();
 	}
 
-	public boolean contains(String path) {
-		return configuration.contains(track + path);
+	public int size() {
+		return arguments.length;
 	}
 }

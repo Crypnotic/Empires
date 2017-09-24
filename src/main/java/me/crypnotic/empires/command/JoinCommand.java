@@ -21,43 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.config;
+package me.crypnotic.empires.command;
 
-import java.util.HashSet;
-import java.util.Set;
+import me.crypnotic.empires.api.command.CommandContext;
+import me.crypnotic.empires.api.command.ICommand;
+import me.crypnotic.empires.api.empire.Empire;
+import me.crypnotic.empires.api.player.EmpirePlayer;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
+public class JoinCommand implements ICommand {
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+	@Override
+	public void execute(EmpirePlayer player, CommandContext context) {
+		if (context.size() > 0) {
+			if (player.getEmpire() == null) {
+				String name = context.get(0);
+				Empire empire = getEmpireManager().getEmpireByName(name);
+				if (empire != null) {
+					if (empire.getInvites().contains(player)) {
+						empire.removeInvite(player);
+						empire.addMember(player.getUuid());
 
-@RequiredArgsConstructor
-public class ConfigSection {
-
-	@Getter
-	private final YamlConfiguration configuration;
-	@Getter
-	private final String track;
-
-	public ConfigElement get(String path) {
-		return new ConfigElement(configuration.get(track + path));
-	}
-
-	public void set(String path, Object value) {
-		configuration.set(track + path, value);
-	}
-
-	public ConfigSection getSection(String path) {
-		return new ConfigSection(configuration, track + path);
-	}
-
-	public Set<String> getKeys(String path) {
-		ConfigurationSection section = configuration.getConfigurationSection(track + path);
-		return section == null ? new HashSet<String>() : section.getKeys(false);
-	}
-
-	public boolean contains(String path) {
-		return configuration.contains(track + path);
+						empire.broadcast("&a" + player.getName() + " &ehas joined the empire.");
+					} else {
+						player.message("&cYou have not been invited to this empire.");
+					}
+				} else {
+					player.message("&cUnkown empire: " + name);
+				}
+			} else {
+				player.message("&cYou're already a part of another empire.");
+			}
+		} else {
+			player.message("&cUsage: /empire join (name)");
+		}
 	}
 }

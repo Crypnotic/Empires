@@ -24,75 +24,67 @@
 package me.crypnotic.empires.manager;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Chunk;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import me.crypnotic.empires.api.Strings;
 import me.crypnotic.empires.api.config.Config;
 import me.crypnotic.empires.api.config.ConfigSection;
 import me.crypnotic.empires.api.config.ConfigType;
-import me.crypnotic.empires.api.empire.Empire;
-import me.crypnotic.empires.api.empire.Territory;
+import me.crypnotic.empires.api.player.EmpirePlayer;
 
-public class EmpireManager {
+public class PlayerManager {
 
 	private final ConfigManager configManager;
-	private final Map<String, Empire> empires;
+	private final EmpireManager empireManager;
+	private final Map<UUID, EmpirePlayer> players;
 
-	public EmpireManager(ConfigManager configManager) {
+	public PlayerManager(ConfigManager configManager, EmpireManager empireManager) {
 		this.configManager = configManager;
-		this.empires = new HashMap<String, Empire>();
+		this.empireManager = empireManager;
+		this.players = new HashMap<UUID, EmpirePlayer>();
 	}
 
-	public boolean init() {
-		Config config = configManager.get(ConfigType.EMPIRES);
-
-		for (String name : config.getKeys("empires")) {
-			ConfigSection section = config.getSection("empires." + name);
-
-			UUID owner = section.get("owner").asUUID();
-			Territory territory = Strings.parseTerritory(section.get("territory").asStringList());
-			List<UUID> members = section.get("members").asUUIDList();
-
-			Empire empire = new Empire(name, owner, territory, members);
-
-			empires.put(name, empire);
+	public void init() {
+		if (!players.isEmpty()) {
+			players.clear();
 		}
+
+		for (Player target : Bukkit.getServer().getOnlinePlayers()) {
+			load(target.getUniqueId());
+
+			EmpirePlayer player = get(target.getUniqueId());
+			if (player.getEmpire() != null) {
+				player.getEmpire().addOnline(player);
+			}
+		}
+	}
+
+	public EmpirePlayer get(UUID uuid) {
+		return players.get(uuid);
+	}
+
+	public EmpirePlayer load(UUID uuid) {
+		if (players.containsKey(uuid)) {
+			return get(uuid);
+		}
+
+		Config config = configManager.get(ConfigType.PLAYERS);
+		ConfigSection section = config.getSection("players." + Strings.serializeUUID(uuid));
+
+		EmpirePlayer player = new EmpirePlayer(uuid);
+
+		if (section.contains("empire")) {
+			player.setEmpire(empireManager.getEmpireByName(section.get("empire").asString()));
+		}
+		return player;
+	}
+
+	public boolean save(EmpirePlayer player) {
 
 		return true;
-	}
-
-	public boolean saveEmpire(Empire empire) {
-		String name = empire.getName();
-
-		Config config = configManager.get(ConfigType.EMPIRES);
-		ConfigSection section = config.getSection("empires." + name);
-
-		section.set("owner", Strings.serializeUUID(empire.getOwner()));
-		section.set("territory", Strings.serializeTerritory(empire.getTerritory()));
-		section.set("members", Strings.serializeUUIDList(empire.getMembers()));
-
-		return config.save();
-	}
-
-	public Empire getEmpireByChunk(Chunk chunk) {
-		for (Empire empire : empires.values()) {
-			if (empire.getTerritory().contains(chunk)) {
-				return empire;
-			}
-		}
-		return null;
-	}
-
-	public Empire getEmpireByName(String name) {
-		for (Empire empire : empires.values()) {
-			if (empire.getName().equals(name)) {
-				return empire;
-			}
-		}
-		return null;
 	}
 }

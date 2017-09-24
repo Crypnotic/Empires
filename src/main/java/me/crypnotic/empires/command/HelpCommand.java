@@ -21,43 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.config;
+package me.crypnotic.empires.command;
 
-import java.util.HashSet;
-import java.util.Set;
+import me.crypnotic.empires.api.command.CommandContext;
+import me.crypnotic.empires.api.command.ICommand;
+import me.crypnotic.empires.api.player.EmpirePlayer;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
+public class HelpCommand implements ICommand {
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+	@Override
+	public void execute(EmpirePlayer player, CommandContext context) {
 
-@RequiredArgsConstructor
-public class ConfigSection {
-
-	@Getter
-	private final YamlConfiguration configuration;
-	@Getter
-	private final String track;
-
-	public ConfigElement get(String path) {
-		return new ConfigElement(configuration.get(track + path));
-	}
-
-	public void set(String path, Object value) {
-		configuration.set(track + path, value);
-	}
-
-	public ConfigSection getSection(String path) {
-		return new ConfigSection(configuration, track + path);
-	}
-
-	public Set<String> getKeys(String path) {
-		ConfigurationSection section = configuration.getConfigurationSection(track + path);
-		return section == null ? new HashSet<String>() : section.getKeys(false);
-	}
-
-	public boolean contains(String path) {
-		return configuration.contains(track + path);
 	}
 }

@@ -27,30 +27,55 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.Getter;
 import me.crypnotic.empires.api.config.ConfigType;
+import me.crypnotic.empires.listener.MechanicsListener;
+import me.crypnotic.empires.manager.CommandManager;
 import me.crypnotic.empires.manager.ConfigManager;
 import me.crypnotic.empires.manager.EmpireManager;
+import me.crypnotic.empires.manager.PlayerManager;
 
 public class EmpiresPlugin extends JavaPlugin {
 
 	@Getter
+	private static EmpiresPlugin plugin;
+
+	@Getter
+	private CommandManager commandManager;
+	@Getter
 	private ConfigManager configManager;
 	@Getter
 	private EmpireManager empireManager;
+	@Getter
+	private PlayerManager playerManager;
 
 	@Override
 	public void onLoad() {
+		EmpiresPlugin.plugin = this;
+
 		this.configManager = new ConfigManager(getDataFolder());
 		this.empireManager = new EmpireManager(configManager);
+		this.playerManager = new PlayerManager(configManager, empireManager);
+		this.commandManager = new CommandManager(playerManager);
 	}
 
 	@Override
 	public void onEnable() {
 		if (configManager.init().size() != ConfigType.values().length) {
-			// TODO Halt plugin init and log issue
+			getLogger().severe("Could not load configuration files!");
+			setEnabled(false);
+			return;
 		}
+
 		if (!empireManager.init()) {
-			// TODO Halt plugin init and log issue
+			getLogger().severe("Could not load empires from file storage!");
+			setEnabled(false);
+			return;
 		}
+
+		playerManager.init();
+		commandManager.init();
+
+		getCommand("empire").setExecutor(commandManager);
+		getServer().getPluginManager().registerEvents(new MechanicsListener(empireManager, playerManager), this);
 	}
 
 	@Override

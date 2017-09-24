@@ -23,13 +23,14 @@
  */
 package me.crypnotic.empires.api.empire;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import me.crypnotic.empires.api.player.EmpirePlayer;
 
-@RequiredArgsConstructor
 public class Empire {
 
 	@Getter
@@ -40,8 +41,53 @@ public class Empire {
 	private final Territory territory;
 	@Getter
 	private final List<UUID> members;
+	@Getter
+	private Set<EmpirePlayer> online;
+	@Getter
+	private Set<EmpirePlayer> invites;
+
+	public Empire(String name, UUID owner, Territory territory, List<UUID> members) {
+		this.name = name;
+		this.owner = owner;
+		this.territory = territory;
+		this.members = members;
+		this.online = new HashSet<EmpirePlayer>();
+		this.invites = new HashSet<EmpirePlayer>();
+	}
+
+	public boolean isOwner(UUID uuid) {
+		return owner.equals(uuid);
+	}
 
 	public boolean isMember(UUID uuid) {
-		return owner.equals(uuid) || members.contains(uuid);
+		return isOwner(uuid) || members.contains(uuid);
+	}
+
+	public void broadcast(String message) {
+		online.forEach(player -> player.message(message));
+	}
+
+	public void addMember(UUID uuid) {
+		members.add(uuid);
+	}
+
+	public void addOnline(EmpirePlayer player) {
+		online.add(player);
+	}
+
+	public void addInvite(EmpirePlayer player) {
+		invites.add(player);
+	}
+
+	public void removeMember(UUID uuid) {
+		members.remove(uuid);
+	}
+
+	public void removeOnline(EmpirePlayer player) {
+		online.remove(player);
+	}
+
+	public void removeInvite(EmpirePlayer player) {
+		invites.remove(player);
 	}
 }

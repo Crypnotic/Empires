@@ -36,10 +36,15 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 
 import me.crypnotic.empires.api.empire.Territory;
+import net.md_5.bungee.api.ChatColor;
 
 public class Strings {
 
 	private static final Pattern UUID_PATTERN = Pattern.compile("^(\\w{8})-?(\\w{4})-?(\\w{4})-?(\\w{4})-?(\\w{12})$");
+
+	public static String color(String text) {
+		return ChatColor.translateAlternateColorCodes('&', text);
+	}
 
 	public static boolean isUUID(String text) {
 		return UUID_PATTERN.matcher(text).matches();

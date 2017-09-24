@@ -24,62 +24,106 @@
 package me.crypnotic.empires.listener;
 
 import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import lombok.RequiredArgsConstructor;
-import me.crypnotic.empires.EmpiresPlugin;
 import me.crypnotic.empires.api.empire.Empire;
+import me.crypnotic.empires.api.player.EmpirePlayer;
+import me.crypnotic.empires.manager.EmpireManager;
+import me.crypnotic.empires.manager.PlayerManager;
 
 @RequiredArgsConstructor
-public class PlayerListener implements Listener {
+public class MechanicsListener implements Listener {
 
-	private final EmpiresPlugin plugin;
+	private final EmpireManager empireManager;
+	private final PlayerManager playerManager;
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		EmpirePlayer player = playerManager.load(event.getPlayer().getUniqueId());
+		if (player.getEmpire() == null) {
+			return;
+		}
+
+		Empire empire = player.getEmpire();
+
+		empire.addOnline(player);
+		empire.broadcast("&a" + player.getName() + " &elogged on.");
+	}
+
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		EmpirePlayer player = playerManager.load(event.getPlayer().getUniqueId());
+		if (player.getEmpire() == null) {
+			return;
+		}
+
+		Empire empire = player.getEmpire();
+
+		empire.removeOnline(player);
+		empire.broadcast("&a" + player.getName() + " &elogged off.");
+	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		Chunk chunk = player.getLocation().getChunk();
-		Empire empire = plugin.getEmpireManager().getEmpireByChunk(chunk);
+		Action action = event.getAction();
+		if (action == Action.RIGHT_CLICK_AIR || action == Action.LEFT_CLICK_AIR) {
+			return;
+		}
+
+		EmpirePlayer player = playerManager.get(event.getPlayer().getUniqueId());
+		Chunk chunk = player.getChunk();
+		Empire empire = empireManager.getEmpireByChunk(chunk);
 		if (empire == null) {
 			return;
 		}
 
+		if (empire.isMember(player.getUuid())) {
+			return;
+		}
+
+		event.setCancelled(true);
+		player.warn("&c&l" + empire.getName() + " owns this territory!");
 	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
-		Player player = event.getPlayer();
+		EmpirePlayer player = playerManager.get(event.getPlayer().getUniqueId());
 		Chunk chunk = event.getBlock().getChunk();
-		Empire empire = plugin.getEmpireManager().getEmpireByChunk(chunk);
+		Empire empire = empireManager.getEmpireByChunk(chunk);
 		if (empire == null) {
 			return;
 		}
 
-		if (empire.isMember(player.getUniqueId())) {
+		if (empire.isMember(player.getUuid())) {
 			return;
 		}
 
 		event.setCancelled(true);
+		player.warn("&c&l" + empire.getName() + " owns this territory!");
 	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
-		Player player = event.getPlayer();
+		EmpirePlayer player = playerManager.get(event.getPlayer().getUniqueId());
 		Chunk chunk = event.getBlock().getChunk();
-		Empire empire = plugin.getEmpireManager().getEmpireByChunk(chunk);
+		Empire empire = empireManager.getEmpireByChunk(chunk);
 		if (empire == null) {
 			return;
 		}
 
-		if (empire.isMember(player.getUniqueId())) {
+		if (empire.isMember(player.getUuid())) {
 			return;
 		}
 
 		event.setCancelled(true);
+		player.warn("&c&l" + empire.getName() + " owns this territory!");
 	}
 }

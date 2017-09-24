@@ -21,43 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.config;
+package me.crypnotic.empires.api.command;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.logging.Level;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import me.crypnotic.empires.EmpiresPlugin;
+import me.crypnotic.empires.api.player.EmpirePlayer;
+import me.crypnotic.empires.manager.ConfigManager;
+import me.crypnotic.empires.manager.EmpireManager;
+import me.crypnotic.empires.manager.PlayerManager;
 
-@RequiredArgsConstructor
-public class ConfigSection {
+public interface ICommand {
 
-	@Getter
-	private final YamlConfiguration configuration;
-	@Getter
-	private final String track;
+	void execute(EmpirePlayer player, CommandContext context);
 
-	public ConfigElement get(String path) {
-		return new ConfigElement(configuration.get(track + path));
+	default EmpiresPlugin getPlugin() {
+		return EmpiresPlugin.getPlugin();
 	}
 
-	public void set(String path, Object value) {
-		configuration.set(track + path, value);
+	default ConfigManager getConfigManager() {
+		return getPlugin().getConfigManager();
 	}
 
-	public ConfigSection getSection(String path) {
-		return new ConfigSection(configuration, track + path);
+	default EmpireManager getEmpireManager() {
+		return getPlugin().getEmpireManager();
 	}
 
-	public Set<String> getKeys(String path) {
-		ConfigurationSection section = configuration.getConfigurationSection(track + path);
-		return section == null ? new HashSet<String>() : section.getKeys(false);
+	default PlayerManager getPlayerManager() {
+		return getPlugin().getPlayerManager();
 	}
 
-	public boolean contains(String path) {
-		return configuration.contains(track + path);
+	default void log(Level level, String message) {
+		getPlugin().getLogger().log(level, message);
+	}
+
+	default Player getPlayer(String name) {
+		return getPlugin().getServer().getPlayer(name);
 	}
 }
