@@ -24,18 +24,11 @@
 package me.crypnotic.empires.api;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-
-import me.crypnotic.empires.api.empire.Territory;
 import net.md_5.bungee.api.ChatColor;
 
 public class Strings {
@@ -67,22 +60,6 @@ public class Strings {
 		return result;
 	}
 
-	public static Territory parseTerritory(String text) {
-		Set<Chunk> chunks = new HashSet<Chunk>();
-
-		String[] stack = text.split(";");
-		for (String element : stack) {
-			String[] data = element.split("_");
-			World world = Bukkit.getServer().getWorld(data[0]);
-			if (world == null) {
-				continue;
-			}
-			chunks.add(world.getChunkAt(Integer.valueOf(data[1]), Integer.valueOf(data[2])));
-		}
-
-		return new Territory(chunks);
-	}
-
 	public static String serializeUUID(UUID uuid) {
 		return uuid.toString().replace("-", "");
 	}
@@ -92,17 +69,6 @@ public class Strings {
 			return "";
 		}
 		return list.stream().map(Strings::serializeUUID).collect(Collectors.joining(";"));
-	}
-
-	public static String serializeChunk(Chunk chunk) {
-		return chunk.getWorld().getName() + "_" + chunk.getX() + "_" + chunk.getZ();
-	}
-
-	public static String serializeTerritory(Territory territory) {
-		if (territory.isEmpty()) {
-			return "";
-		}
-		return territory.stream().map(Strings::serializeChunk).collect(Collectors.joining(";"));
 	}
 
 	public static String trim(String text, int length) {

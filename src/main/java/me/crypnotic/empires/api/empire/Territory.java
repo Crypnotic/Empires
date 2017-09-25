@@ -23,10 +23,14 @@
  */
 package me.crypnotic.empires.api.empire;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import lombok.Getter;
@@ -64,5 +68,39 @@ public class Territory {
 
 	public boolean isEmpty() {
 		return chunks.isEmpty();
+	}
+
+	public String serialize() {
+		StringBuilder builder = new StringBuilder();
+
+		Iterator<Chunk> iterator = chunks.iterator();
+		while (iterator.hasNext()) {
+			Chunk chunk = iterator.next();
+			builder.append(chunk.getWorld().getName() + "_" + chunk.getX() + "_" + chunk.getZ());
+			if (iterator.hasNext()) {
+				builder.append(";");
+			}
+		}
+		return builder.toString();
+	}
+
+	public static Territory deserialize(String text) {
+		Set<Chunk> chunks = new HashSet<Chunk>();
+
+		String[] stack = text.split(";");
+		for (String element : stack) {
+			String[] data = element.split("_");
+			if (data == null || data.length == 0) {
+				continue;
+			}
+
+			World world = Bukkit.getServer().getWorld(data[0]);
+			if (world == null) {
+				continue;
+			}
+
+			chunks.add(world.getChunkAt(Integer.valueOf(data[1]), Integer.valueOf(data[2])));
+		}
+		return new Territory(chunks);
 	}
 }

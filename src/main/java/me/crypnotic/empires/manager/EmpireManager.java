@@ -61,7 +61,7 @@ public class EmpireManager {
 
 			String name = section.get("name").asString();
 			UUID owner = section.get("owner").asUUID();
-			Territory territory = Strings.parseTerritory(section.get("territory").asString());
+			Territory territory = Territory.deserialize(section.get("territory").asString());
 			List<UUID> members = section.get("members").asUUIDList();
 
 			Empire empire = new Empire(id, name, owner, territory, members);
@@ -129,7 +129,7 @@ public class EmpireManager {
 
 		section.set("name", empire.getName());
 		section.set("owner", Strings.serializeUUID(empire.getOwner()));
-		section.set("territory", Strings.serializeTerritory(empire.getTerritory()));
+		section.set("territory", empire.getTerritory().serialize());
 		section.set("members", Strings.serializeUUIDList(empire.getMembers()));
 
 		return config.save();
