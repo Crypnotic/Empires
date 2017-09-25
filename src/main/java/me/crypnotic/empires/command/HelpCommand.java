@@ -38,16 +38,12 @@ public class HelpCommand implements ICommand {
 		if (context.size() > 0) {
 			Integer page = context.getInteger(0);
 			if (page > 0) {
-				Collection<ICommand> commands = getCommands(page - 1);
-
-				print(player, commands, page);
+				print(player, getCommands(page - 1), page);
 			} else {
 				player.message("&cPage number must be greater than zero.");
 			}
 		} else {
-			Collection<ICommand> commands = getCommands(0);
-
-			print(player, commands, 1);
+			print(player, getCommands(0), 1);
 		}
 	}
 
