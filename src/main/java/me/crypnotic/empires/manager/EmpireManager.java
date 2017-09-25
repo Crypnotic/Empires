@@ -23,11 +23,10 @@
  */
 package me.crypnotic.empires.manager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Chunk;
@@ -62,7 +61,7 @@ public class EmpireManager {
 			String name = section.get("name").asString();
 			UUID owner = section.get("owner").asUUID();
 			Territory territory = Territory.deserialize(section.get("territory").asString());
-			List<UUID> members = section.get("members").asUUIDList();
+			Set<UUID> members = section.get("members").asUUIDSet();
 
 			Empire empire = new Empire(id, name, owner, territory, members);
 
@@ -77,7 +76,7 @@ public class EmpireManager {
 		if (empires.containsKey(id)) {
 			return null;
 		}
-		Empire empire = new Empire(id, name, owner, new Territory(new HashSet<Chunk>()), new ArrayList<UUID>());
+		Empire empire = new Empire(id, name, owner, new Territory(new HashSet<Chunk>()), new HashSet<UUID>());
 
 		empires.put(name, empire);
 
@@ -130,7 +129,7 @@ public class EmpireManager {
 		section.set("name", empire.getName());
 		section.set("owner", Strings.serializeUUID(empire.getOwner()));
 		section.set("territory", empire.getTerritory().serialize());
-		section.set("members", Strings.serializeUUIDList(empire.getMembers()));
+		section.set("members", Strings.serializeUUIDSet(empire.getMembers()));
 
 		return config.save();
 	}

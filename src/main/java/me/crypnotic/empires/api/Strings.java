@@ -23,8 +23,8 @@
  */
 package me.crypnotic.empires.api;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,12 +48,12 @@ public class Strings {
 		return UUID.fromString(text);
 	}
 
-	public static List<UUID> parseUUIDList(String text) {
+	public static Set<UUID> parseUUIDSet(String text) {
+		Set<UUID> result = new HashSet<UUID>();
 		if (text == null || text.isEmpty()) {
-			return new ArrayList<UUID>();
+			return result;
 		}
 		String[] elements = text.split(";");
-		List<UUID> result = new ArrayList<UUID>();
 		for (String element : elements) {
 			result.add(parseUUID(element));
 		}
@@ -64,11 +64,11 @@ public class Strings {
 		return uuid.toString().replace("-", "");
 	}
 
-	public static String serializeUUIDList(List<UUID> list) {
-		if (list.isEmpty()) {
+	public static String serializeUUIDSet(Set<UUID> set) {
+		if (set.isEmpty()) {
 			return "";
 		}
-		return list.stream().map(Strings::serializeUUID).collect(Collectors.joining(";"));
+		return set.stream().map(Strings::serializeUUID).collect(Collectors.joining(";"));
 	}
 
 	public static String trim(String text, int length) {

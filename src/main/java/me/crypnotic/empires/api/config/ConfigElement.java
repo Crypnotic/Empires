@@ -23,7 +23,7 @@
  */
 package me.crypnotic.empires.api.config;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
@@ -54,13 +54,8 @@ public class ConfigElement {
 		return !exists() ? null : Strings.parseUUID(asString());
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<String> asStringList() {
-		return !exists() ? null : (List<String>) value;
-	}
-
-	public List<UUID> asUUIDList() {
-		return !exists() ? null : Strings.parseUUIDList(asString());
+	public Set<UUID> asUUIDSet() {
+		return !exists() ? null : Strings.parseUUIDSet(asString());
 	}
 
 	public boolean exists() {

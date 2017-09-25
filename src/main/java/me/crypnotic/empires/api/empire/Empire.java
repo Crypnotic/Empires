@@ -24,7 +24,6 @@
 package me.crypnotic.empires.api.empire;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -42,13 +41,13 @@ public class Empire {
 	@Getter
 	private final Territory territory;
 	@Getter
-	private final List<UUID> members;
+	private final Set<UUID> members;
 	@Getter
 	private Set<EmpirePlayer> online;
 	@Getter
 	private Set<EmpirePlayer> invites;
 
-	public Empire(String id, String name, UUID owner, Territory territory, List<UUID> members) {
+	public Empire(String id, String name, UUID owner, Territory territory, Set<UUID> members) {
 		this.id = id;
 		this.name = name;
 		this.owner = owner;
