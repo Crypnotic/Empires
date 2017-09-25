@@ -25,13 +25,13 @@ package me.crypnotic.empires.manager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import lombok.Getter;
 import me.crypnotic.empires.api.command.CommandContext;
 import me.crypnotic.empires.api.command.ICommand;
 import me.crypnotic.empires.api.player.EmpirePlayer;
@@ -46,7 +46,6 @@ import me.crypnotic.empires.command.LeaveCommand;
 public class CommandManager implements CommandExecutor {
 
 	private final PlayerManager playerManager;
-	@Getter
 	private final Map<String, ICommand> commands;
 
 	public CommandManager(PlayerManager playerManager) {
@@ -89,5 +88,9 @@ public class CommandManager implements CommandExecutor {
 			sender.sendMessage("Only players can use this command.");
 		}
 		return true;
+	}
+
+	public Stream<ICommand> stream() {
+		return commands.values().stream();
 	}
 }

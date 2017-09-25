@@ -70,7 +70,7 @@ public class HelpCommand implements ICommand {
 	}
 
 	private Collection<ICommand> getCommands(int page) {
-		return getCommandManager().getCommands().values().stream().sorted((command1, command2) -> {
+		return getCommandManager().stream().sorted((command1, command2) -> {
 			return command1.getName().compareToIgnoreCase(command2.getName());
 		}).skip(page * 5).limit(5).collect(Collectors.toList());
 	}
