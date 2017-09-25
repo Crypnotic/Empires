@@ -21,65 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.player;
+package me.crypnotic.empires.command;
 
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import me.crypnotic.empires.api.Strings;
+import me.crypnotic.empires.api.command.CommandContext;
+import me.crypnotic.empires.api.command.ICommand;
 import me.crypnotic.empires.api.empire.Empire;
+import me.crypnotic.empires.api.player.EmpirePlayer;
 
-@RequiredArgsConstructor
-public class EmpirePlayer {
-
-	@Getter
-	private final UUID uuid;
-	@Getter
-	@Setter
-	private Empire empire;
-	private Long lastWarning;
-
-	public Player getHandle() {
-		return Bukkit.getServer().getPlayer(uuid);
-	}
-
-	public String getName() {
-		return getHandle().getName();
-	}
-
-	public Location getLocation() {
-		return getHandle().getLocation();
-	}
-
-	public Chunk getChunk() {
-		return getLocation().getChunk();
-	}
-
-	public void message(String message) {
-		getHandle().sendMessage(Strings.color(message));
-	}
-
-	public void warn(String message) {
-		long current = System.currentTimeMillis();
-		if (current - lastWarning >= 2000) {
-			message(message);
-			this.lastWarning = current;
-		}
-	}
+public class ClaimCommand implements ICommand {
 
 	@Override
-	public boolean equals(Object value) {
-		if (value instanceof EmpirePlayer) {
-			EmpirePlayer player = (EmpirePlayer) value;
-			return uuid.equals(player.getUuid());
+	public void execute(EmpirePlayer player, CommandContext context) {
+		if (player.getEmpire() != null) {
+			Empire empire = player.getEmpire();
+			if (empire.isOwner(player.getUuid())) {
+				Chunk chunk = player.getChunk();
+				Empire holder = getEmpireManager().getEmpireByChunk(chunk);
+				if (holder == null) {
+					// TODO check WorldGuard regions and other applicable
+					// systems
+					// TODO add some sort of restriction on territory claiming
+					empire.getTerritory().add(chunk);
+					empire.broadcast("&a" + player.getName() + " has claimed a new territory.");
+
+					getEmpireManager().save(empire);
+				} else {
+					if (holder.equals(empire)) {
+						player.message("&cYour empire has already claimed this territory.");
+					} else {
+						player.message("&c" + empire.getName() + " owns this territory!");
+					}
+				}
+			} else {
+				player.message("&cYou must own your empire to claim territories.");
+			}
+		} else {
+			player.message("&cYou must own an empire to claim territories.");
 		}
-		return false;
 	}
 }

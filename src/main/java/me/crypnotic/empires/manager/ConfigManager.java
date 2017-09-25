@@ -71,7 +71,6 @@ public class ConfigManager {
 						input.close();
 						output.close();
 					}
-
 				} catch (IOException exception) {
 					exception.printStackTrace();
 				}

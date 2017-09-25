@@ -23,26 +23,32 @@
  */
 package me.crypnotic.empires.manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Chunk;
 
+import me.crypnotic.empires.EmpiresPlugin;
 import me.crypnotic.empires.api.Strings;
 import me.crypnotic.empires.api.config.Config;
 import me.crypnotic.empires.api.config.ConfigSection;
 import me.crypnotic.empires.api.config.ConfigType;
 import me.crypnotic.empires.api.empire.Empire;
 import me.crypnotic.empires.api.empire.Territory;
+import me.crypnotic.empires.api.player.EmpirePlayer;
 
 public class EmpireManager {
 
+	private final EmpiresPlugin plugin;
 	private final ConfigManager configManager;
 	private final Map<String, Empire> empires;
 
-	public EmpireManager(ConfigManager configManager) {
+	public EmpireManager(EmpiresPlugin plugin, ConfigManager configManager) {
+		this.plugin = plugin;
 		this.configManager = configManager;
 		this.empires = new HashMap<String, Empire>();
 	}
@@ -50,27 +56,78 @@ public class EmpireManager {
 	public boolean init() {
 		Config config = configManager.get(ConfigType.EMPIRES);
 
-		for (String name : config.getKeys("empires")) {
-			ConfigSection section = config.getSection("empires." + name);
+		for (String id : config.getKeys("empires")) {
+			ConfigSection section = config.getSection("empires." + id);
 
+			String name = section.get("name").asString();
 			UUID owner = section.get("owner").asUUID();
-			Territory territory = Strings.parseTerritory(section.get("territory").asStringList());
+			Territory territory = Strings.parseTerritory(section.get("territory").asString());
 			List<UUID> members = section.get("members").asUUIDList();
 
-			Empire empire = new Empire(name, owner, territory, members);
+			Empire empire = new Empire(id, name, owner, territory, members);
 
-			empires.put(name, empire);
+			empires.put(id, empire);
 		}
 
 		return true;
 	}
 
-	public boolean saveEmpire(Empire empire) {
-		String name = empire.getName();
+	public Empire add(String name, UUID owner) {
+		String id = name.toLowerCase();
+		if (empires.containsKey(id)) {
+			return null;
+		}
+		Empire empire = new Empire(id, name, owner, new Territory(new HashSet<Chunk>()), new ArrayList<UUID>());
+
+		empires.put(name, empire);
+
+		save(empire);
+
+		return empire;
+	}
+
+	public boolean remove(Empire empire, EmpirePlayer player) {
+		if (!empires.containsKey(empire.getId())) {
+			return false;
+		}
 
 		Config config = configManager.get(ConfigType.EMPIRES);
-		ConfigSection section = config.getSection("empires." + name);
+		config.set("empires." + empire.getId(), null);
 
+		boolean removed = config.save();
+		if (removed) {
+			empires.remove(empire.getId());
+
+			/*
+			 * Making sure the player that is removing the Empire is the owner.
+			 * This makes /empire delete (name) possible
+			 */
+			if (player.getEmpire().equals(empire)) {
+				player.setEmpire(null);
+				plugin.getPlayerManager().save(player);
+			}
+
+			empire.broadcast("&a" + empire.getName() + " &ehas been disbanded by &a" + player.getName());
+
+			for (UUID uuid : empire.getMembers()) {
+				EmpirePlayer target = plugin.getPlayerManager().load(uuid, false);
+
+				target.setEmpire(null);
+
+				plugin.getPlayerManager().save(target);
+			}
+		}
+
+		return removed;
+	}
+
+	public boolean save(Empire empire) {
+		String id = empire.getId();
+
+		Config config = configManager.get(ConfigType.EMPIRES);
+		ConfigSection section = config.getSection("empires." + id);
+
+		section.set("name", empire.getName());
 		section.set("owner", Strings.serializeUUID(empire.getOwner()));
 		section.set("territory", Strings.serializeTerritory(empire.getTerritory()));
 		section.set("members", Strings.serializeUUIDList(empire.getMembers()));
@@ -78,21 +135,11 @@ public class EmpireManager {
 		return config.save();
 	}
 
-	public Empire getEmpireByChunk(Chunk chunk) {
-		for (Empire empire : empires.values()) {
-			if (empire.getTerritory().contains(chunk)) {
-				return empire;
-			}
-		}
-		return null;
+	public Empire getEmpireByName(String name) {
+		return empires.get(name.toLowerCase());
 	}
 
-	public Empire getEmpireByName(String name) {
-		for (Empire empire : empires.values()) {
-			if (empire.getName().equals(name)) {
-				return empire;
-			}
-		}
-		return null;
+	public Empire getEmpireByChunk(final Chunk chunk) {
+		return empires.values().stream().filter(empire -> empire.getTerritory().contains(chunk)).findAny().orElse(null);
 	}
 }

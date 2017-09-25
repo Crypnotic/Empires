@@ -54,7 +54,7 @@ public class PlayerManager {
 		}
 
 		for (Player target : Bukkit.getServer().getOnlinePlayers()) {
-			load(target.getUniqueId());
+			load(target.getUniqueId(), true);
 
 			EmpirePlayer player = get(target.getUniqueId());
 			if (player.getEmpire() != null) {
@@ -67,7 +67,7 @@ public class PlayerManager {
 		return players.get(uuid);
 	}
 
-	public EmpirePlayer load(UUID uuid) {
+	public EmpirePlayer load(UUID uuid, boolean cache) {
 		if (players.containsKey(uuid)) {
 			return get(uuid);
 		}
@@ -77,7 +77,9 @@ public class PlayerManager {
 
 		EmpirePlayer player = new EmpirePlayer(uuid);
 
-		players.put(uuid, player);
+		if (cache) {
+			players.put(uuid, player);
+		}
 
 		if (section.contains("empire")) {
 			player.setEmpire(empireManager.getEmpireByName(section.get("empire").asString()));
@@ -87,7 +89,12 @@ public class PlayerManager {
 	}
 
 	public boolean save(EmpirePlayer player) {
+		Config config = configManager.get(ConfigType.PLAYERS);
+		ConfigSection section = config.getSection("players." + Strings.serializeUUID(player.getUuid()));
 
-		return true;
+		section.set("name", player.getName());
+		section.set("empire", player.getEmpire() != null ? player.getEmpire().getId() : null);
+
+		return config.save();
 	}
 }

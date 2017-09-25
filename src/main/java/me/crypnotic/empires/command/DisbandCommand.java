@@ -21,65 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.player;
+package me.crypnotic.empires.command;
 
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import me.crypnotic.empires.api.Strings;
+import me.crypnotic.empires.api.command.CommandContext;
+import me.crypnotic.empires.api.command.ICommand;
 import me.crypnotic.empires.api.empire.Empire;
+import me.crypnotic.empires.api.player.EmpirePlayer;
 
-@RequiredArgsConstructor
-public class EmpirePlayer {
-
-	@Getter
-	private final UUID uuid;
-	@Getter
-	@Setter
-	private Empire empire;
-	private Long lastWarning;
-
-	public Player getHandle() {
-		return Bukkit.getServer().getPlayer(uuid);
-	}
-
-	public String getName() {
-		return getHandle().getName();
-	}
-
-	public Location getLocation() {
-		return getHandle().getLocation();
-	}
-
-	public Chunk getChunk() {
-		return getLocation().getChunk();
-	}
-
-	public void message(String message) {
-		getHandle().sendMessage(Strings.color(message));
-	}
-
-	public void warn(String message) {
-		long current = System.currentTimeMillis();
-		if (current - lastWarning >= 2000) {
-			message(message);
-			this.lastWarning = current;
-		}
-	}
+public class DisbandCommand implements ICommand {
 
 	@Override
-	public boolean equals(Object value) {
-		if (value instanceof EmpirePlayer) {
-			EmpirePlayer player = (EmpirePlayer) value;
-			return uuid.equals(player.getUuid());
+	public void execute(EmpirePlayer player, CommandContext context) {
+		if (player.getEmpire() != null) {
+			Empire empire = player.getEmpire();
+			if (empire.isOwner(player.getUuid())) {
+				if (context.size() > 0 && context.get(0).equalsIgnoreCase("confirm")) {
+					if (!getEmpireManager().remove(empire, player)) {
+						/*
+						 * TODO Notify owner that Empire balance has been placed
+						 * into their account along with other relevant
+						 * information
+						 */
+					} else {
+						player.message("&cYour empire could not be disbanded, please try again later.");
+					}
+				} else {
+					player.message("&eDisbanding your empire is irreversible.");
+					player.message("&eType &a/empire disband confirm &eto confirm.");
+				}
+			} else {
+				player.message("&cYou must own your empire to disband it.");
+			}
+		} else {
+			player.message("&cYou must own an empire to invite players.");
 		}
-		return false;
 	}
 }

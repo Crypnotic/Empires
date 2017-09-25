@@ -39,28 +39,28 @@ public class ConfigElement {
 	}
 
 	public Integer asInteger() {
-		return exists() ? null : (Integer) value;
+		return !exists() ? null : (Integer) value;
 	}
 
 	public Double asDouble() {
-		return exists() ? null : (Double) value;
+		return !exists() ? null : (Double) value;
 	}
 
 	public String asString() {
-		return exists() ? null : value.toString();
+		return !exists() ? null : value.toString();
 	}
 
 	public UUID asUUID() {
-		return exists() ? null : Strings.parseUUID(asString());
+		return !exists() ? null : Strings.parseUUID(asString());
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<String> asStringList() {
-		return exists() ? null : (List<String>) value;
+		return !exists() ? null : (List<String>) value;
 	}
 
 	public List<UUID> asUUIDList() {
-		return exists() ? null : Strings.parseUUIDList(asString());
+		return !exists() ? null : Strings.parseUUIDList(asString());
 	}
 
 	public boolean exists() {

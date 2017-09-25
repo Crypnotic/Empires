@@ -47,7 +47,7 @@ public class MechanicsListener implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		EmpirePlayer player = playerManager.load(event.getPlayer().getUniqueId());
+		EmpirePlayer player = playerManager.load(event.getPlayer().getUniqueId(), true);
 		if (player.getEmpire() == null) {
 			return;
 		}
@@ -60,7 +60,7 @@ public class MechanicsListener implements Listener {
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		EmpirePlayer player = playerManager.load(event.getPlayer().getUniqueId());
+		EmpirePlayer player = playerManager.get(event.getPlayer().getUniqueId());
 		if (player.getEmpire() == null) {
 			return;
 		}

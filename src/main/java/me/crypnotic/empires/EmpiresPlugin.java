@@ -52,7 +52,7 @@ public class EmpiresPlugin extends JavaPlugin {
 		EmpiresPlugin.plugin = this;
 
 		this.configManager = new ConfigManager(getDataFolder());
-		this.empireManager = new EmpireManager(configManager);
+		this.empireManager = new EmpireManager(this, configManager);
 		this.playerManager = new PlayerManager(configManager, empireManager);
 		this.commandManager = new CommandManager(playerManager);
 	}

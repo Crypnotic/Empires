@@ -41,23 +41,23 @@ public class ConfigSection {
 	private final String track;
 
 	public ConfigElement get(String path) {
-		return new ConfigElement(configuration.get(track + path));
+		return new ConfigElement(configuration.get(track + "." + path));
 	}
 
 	public void set(String path, Object value) {
-		configuration.set(track + path, value);
+		configuration.set(track + "." + path, value);
 	}
 
 	public ConfigSection getSection(String path) {
-		return new ConfigSection(configuration, track + path);
+		return new ConfigSection(configuration, track + "." + path);
 	}
 
 	public Set<String> getKeys(String path) {
-		ConfigurationSection section = configuration.getConfigurationSection(track + path);
+		ConfigurationSection section = configuration.getConfigurationSection(track + "." + path);
 		return section == null ? new HashSet<String>() : section.getKeys(false);
 	}
 
 	public boolean contains(String path) {
-		return configuration.contains(track + path);
+		return configuration.contains(track + "." + path);
 	}
 }

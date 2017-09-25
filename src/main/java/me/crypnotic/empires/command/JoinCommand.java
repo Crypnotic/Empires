@@ -40,8 +40,14 @@ public class JoinCommand implements ICommand {
 					if (empire.getInvites().contains(player)) {
 						empire.removeInvite(player);
 						empire.addMember(player.getUuid());
+						empire.addOnline(player);
 
+						player.setEmpire(empire);
+						
 						empire.broadcast("&a" + player.getName() + " &ehas joined the empire.");
+						
+						getEmpireManager().save(empire);
+						getPlayerManager().save(player);
 					} else {
 						player.message("&cYou have not been invited to this empire.");
 					}

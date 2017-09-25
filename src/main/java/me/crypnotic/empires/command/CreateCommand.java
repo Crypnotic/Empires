@@ -21,48 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.empire;
+package me.crypnotic.empires.command;
 
-import java.util.Set;
-import java.util.stream.Stream;
+import me.crypnotic.empires.api.command.CommandContext;
+import me.crypnotic.empires.api.command.ICommand;
+import me.crypnotic.empires.api.empire.Empire;
+import me.crypnotic.empires.api.player.EmpirePlayer;
 
-import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
+public class CreateCommand implements ICommand {
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+	@Override
+	public void execute(EmpirePlayer player, CommandContext context) {
+		if (context.size() > 0) {
+			if (player.getEmpire() == null) {
+				String name = context.get(0);
+				Empire holder = getEmpireManager().getEmpireByName(name);
+				if (holder == null) {
+					Empire empire = getEmpireManager().add(name, player.getUuid());
+					if (empire != null) {
+						empire.addOnline(player);
 
-@RequiredArgsConstructor
-public class Territory {
+						player.setEmpire(empire);
+						player.message("&eSuccessfully created empire: &a" + empire.getName());
 
-	@Getter
-	private final Set<Chunk> chunks;
-
-	public boolean add(Chunk chunk) {
-		return chunks.add(chunk);
-	}
-
-	public boolean remove(Chunk chunk) {
-		return chunks.remove(chunk);
-	}
-
-	public boolean contains(Chunk chunk) {
-		return chunks.contains(chunk);
-	}
-
-	public boolean isInside(Player player) {
-		return contains(player.getLocation().getChunk());
-	}
-
-	public Stream<Chunk> stream() {
-		return chunks.stream();
-	}
-
-	public int size() {
-		return chunks.size();
-	}
-
-	public boolean isEmpty() {
-		return chunks.isEmpty();
+						getPlayerManager().save(player);
+					} else {
+						player.message("&cYour empire could not be created, please try again later.");
+					}
+				} else {
+					player.message("&cAn empire already exists with that name.");
+				}
+			} else {
+				player.message("&cYou're already a part of another empire.");
+			}
+		} else {
+			player.message("&cUsage: /empire create (name)");
+		}
 	}
 }

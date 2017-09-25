@@ -34,6 +34,8 @@ import me.crypnotic.empires.api.player.EmpirePlayer;
 public class Empire {
 
 	@Getter
+	private final String id;
+	@Getter
 	private final String name;
 	@Getter
 	private final UUID owner;
@@ -46,7 +48,8 @@ public class Empire {
 	@Getter
 	private Set<EmpirePlayer> invites;
 
-	public Empire(String name, UUID owner, Territory territory, List<UUID> members) {
+	public Empire(String id, String name, UUID owner, Territory territory, List<UUID> members) {
+		this.id = id;
 		this.name = name;
 		this.owner = owner;
 		this.territory = territory;

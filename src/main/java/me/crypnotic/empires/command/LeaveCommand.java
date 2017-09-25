@@ -21,48 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.empires.api.empire;
+package me.crypnotic.empires.command;
 
-import java.util.Set;
-import java.util.stream.Stream;
+import me.crypnotic.empires.api.command.CommandContext;
+import me.crypnotic.empires.api.command.ICommand;
+import me.crypnotic.empires.api.empire.Empire;
+import me.crypnotic.empires.api.player.EmpirePlayer;
 
-import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
+public class LeaveCommand implements ICommand {
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+	@Override
+	public void execute(EmpirePlayer player, CommandContext context) {
+		if (player.getEmpire() != null) {
+			Empire empire = player.getEmpire();
+			if (!empire.isOwner(player.getUuid())) {
+				empire.removeMember(player.getUuid());
+				empire.removeOnline(player);
+				empire.broadcast("&a" + player.getName() + " &ehas left the empire.");
 
-@RequiredArgsConstructor
-public class Territory {
+				player.setEmpire(null);
 
-	@Getter
-	private final Set<Chunk> chunks;
+				player.message("&eSuccessfully left &a" + empire.getName());
 
-	public boolean add(Chunk chunk) {
-		return chunks.add(chunk);
-	}
-
-	public boolean remove(Chunk chunk) {
-		return chunks.remove(chunk);
-	}
-
-	public boolean contains(Chunk chunk) {
-		return chunks.contains(chunk);
-	}
-
-	public boolean isInside(Player player) {
-		return contains(player.getLocation().getChunk());
-	}
-
-	public Stream<Chunk> stream() {
-		return chunks.stream();
-	}
-
-	public int size() {
-		return chunks.size();
-	}
-
-	public boolean isEmpty() {
-		return chunks.isEmpty();
+				getEmpireManager().save(empire);
+				getPlayerManager().save(player);
+			} else {
+				player.message("&cYou can't leave an empire that you own.");
+			}
+		} else {
+			player.message("&cYou are not a part of an empire.");
+		}
 	}
 }

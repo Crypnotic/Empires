@@ -34,9 +34,13 @@ import org.bukkit.entity.Player;
 import me.crypnotic.empires.api.command.CommandContext;
 import me.crypnotic.empires.api.command.ICommand;
 import me.crypnotic.empires.api.player.EmpirePlayer;
+import me.crypnotic.empires.command.ClaimCommand;
+import me.crypnotic.empires.command.CreateCommand;
+import me.crypnotic.empires.command.DisbandCommand;
 import me.crypnotic.empires.command.HelpCommand;
 import me.crypnotic.empires.command.InviteCommand;
 import me.crypnotic.empires.command.JoinCommand;
+import me.crypnotic.empires.command.LeaveCommand;
 
 public class CommandManager implements CommandExecutor {
 
@@ -49,9 +53,13 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	public void init() {
+		commands.put("claim", new ClaimCommand());
+		commands.put("create", new CreateCommand());
+		commands.put("disband", new DisbandCommand());
 		commands.put("help", new HelpCommand());
 		commands.put("invite", new InviteCommand());
 		commands.put("join", new JoinCommand());
+		commands.put("leave", new LeaveCommand());
 	}
 
 	@Override

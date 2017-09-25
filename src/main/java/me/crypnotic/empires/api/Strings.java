@@ -67,18 +67,19 @@ public class Strings {
 		return result;
 	}
 
-	public static Territory parseTerritory(List<String> list) {
+	public static Territory parseTerritory(String text) {
 		Set<Chunk> chunks = new HashSet<Chunk>();
-		for (String encoded : list) {
-			String[] parts = encoded.split(";");
-
-			World world = Bukkit.getServer().getWorld(parts[0]);
+		
+		String[] stack = text.split(";");
+		for (String element : stack) {
+			String[] data = element.split("_");
+			World world = Bukkit.getServer().getWorld(data[0]);
 			if (world == null) {
 				continue;
 			}
-
-			chunks.add(world.getChunkAt(Integer.valueOf(parts[1]), Integer.valueOf(parts[1])));
+			chunks.add(world.getChunkAt(Integer.valueOf(data[1]), Integer.valueOf(data[2])));
 		}
+
 		return new Territory(chunks);
 	}
 
@@ -93,11 +94,14 @@ public class Strings {
 		return list.stream().map(Strings::serializeUUID).collect(Collectors.joining(";"));
 	}
 
-	public static List<String> serializeTerritory(Territory territory) {
-		List<String> result = new ArrayList<String>();
-		territory.forEach((chunk) -> {
-			result.add(chunk.getWorld().getName() + ";" + chunk.getX() + ";" + chunk.getZ());
-		});
-		return null;
+	public static String serializeChunk(Chunk chunk) {
+		return chunk.getWorld().getName() + "_" + chunk.getX() + "_" + chunk.getZ();
+	}
+
+	public static String serializeTerritory(Territory territory) {
+		if (territory.isEmpty()) {
+			return "";
+		}
+		return territory.stream().map(Strings::serializeChunk).collect(Collectors.joining(";"));
 	}
 }
