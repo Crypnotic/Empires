@@ -69,7 +69,7 @@ public class Strings {
 
 	public static Territory parseTerritory(String text) {
 		Set<Chunk> chunks = new HashSet<Chunk>();
-		
+
 		String[] stack = text.split(";");
 		for (String element : stack) {
 			String[] data = element.split("_");
@@ -103,5 +103,9 @@ public class Strings {
 			return "";
 		}
 		return territory.stream().map(Strings::serializeChunk).collect(Collectors.joining(";"));
+	}
+
+	public static String trim(String text, int length) {
+		return text.substring(0, length);
 	}
 }

@@ -100,7 +100,7 @@ public class EmpireManager {
 
 			/*
 			 * Making sure the player that is removing the Empire is the owner.
-			 * This makes /empire delete (name) possible
+			 * This makes /em delete (name) possible
 			 */
 			if (player.getEmpire().equals(empire)) {
 				player.setEmpire(null);

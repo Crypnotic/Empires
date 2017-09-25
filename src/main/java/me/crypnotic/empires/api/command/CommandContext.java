@@ -37,6 +37,10 @@ public class CommandContext {
 		return arguments[index];
 	}
 
+	public Integer getInteger(int index) {
+		return Integer.valueOf(get(index));
+	}
+
 	public String join(String delimeter) {
 		return join(delimeter, 0);
 	}

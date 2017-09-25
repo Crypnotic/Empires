@@ -6,5 +6,5 @@ main: ${project.groupId}.EmpiresPlugin
 commands:
     empire:
         description: The central command to access functions relating to EmpiresPlugin
-        usage: /empire (command)
+        usage: /em (command)
         aliases: [em, empires]

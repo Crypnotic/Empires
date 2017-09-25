@@ -61,4 +61,14 @@ public class ClaimCommand implements ICommand {
 			player.message("&cYou must own an empire to claim territories.");
 		}
 	}
+
+	@Override
+	public String getName() {
+		return "claim";
+	}
+
+	@Override
+	public String getDescription() {
+		return "&eClaim more territory for your Empire";
+	}
 }

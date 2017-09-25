@@ -23,6 +23,10 @@
  */
 package me.crypnotic.empires.command;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+import me.crypnotic.empires.api.Strings;
 import me.crypnotic.empires.api.command.CommandContext;
 import me.crypnotic.empires.api.command.ICommand;
 import me.crypnotic.empires.api.player.EmpirePlayer;
@@ -31,6 +35,53 @@ public class HelpCommand implements ICommand {
 
 	@Override
 	public void execute(EmpirePlayer player, CommandContext context) {
+		if (context.size() > 0) {
+			Integer page = context.getInteger(0);
+			if (page > 0) {
+				Collection<ICommand> commands = getCommands(page - 1);
 
+				print(player, commands, page);
+			} else {
+				player.message("&cPage number must be greater than zero.");
+			}
+		} else {
+			Collection<ICommand> commands = getCommands(0);
+
+			print(player, commands, 1);
+		}
+	}
+
+	private void print(EmpirePlayer player, Collection<ICommand> commands, int page) {
+		if (!commands.isEmpty()) {
+			player.message("&eShowing commands for page: &a" + page);
+
+			for (ICommand command : commands) {
+				String message = "  &a/em " + command.getName() + " &e: &a" + command.getDescription();
+
+				player.message(message.length() > 50 ? Strings.trim(message, 50) + "&e..." : message);
+			}
+
+			if (commands.size() == 5) {
+				player.message("&eType &a/em help " + (page + 1) + " &efor more commands.");
+			}
+		} else {
+			player.message("&cThat page does not exist.");
+		}
+	}
+
+	private Collection<ICommand> getCommands(int page) {
+		return getCommandManager().getCommands().values().stream().sorted((command1, command2) -> {
+			return command1.getName().compareToIgnoreCase(command2.getName());
+		}).skip(page * 5).limit(5).collect(Collectors.toList());
+	}
+
+	@Override
+	public String getName() {
+		return "help";
+	}
+
+	@Override
+	public String getDescription() {
+		return "&eDisplay useful commands and how to use them";
 	}
 }

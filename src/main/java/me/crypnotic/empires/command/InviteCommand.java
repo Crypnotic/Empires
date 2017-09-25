@@ -48,7 +48,7 @@ public class InviteCommand implements ICommand {
 
 									target.message(
 											"&a" + player.getName() + " &einvited you to join &c" + empire.getName());
-									target.message("&eType: &a/empire join " + empire.getName()
+									target.message("&eType: &a/em join " + empire.getName()
 											+ " &e in the next 60 seconds to join.");
 									player.message("&eSuccessfully invited &a" + target.getName());
 
@@ -76,7 +76,17 @@ public class InviteCommand implements ICommand {
 				player.message("&cYou must own an empire to invite players.");
 			}
 		} else {
-			player.message("&cUsage: /empire invite (player)");
+			player.message("&cUsage: /em invite (player)");
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "invite";
+	}
+
+	@Override
+	public String getDescription() {
+		return "&eSend an invite to another player to join your Empire";
 	}
 }

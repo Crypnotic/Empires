@@ -55,7 +55,17 @@ public class CreateCommand implements ICommand {
 				player.message("&cYou're already a part of another empire.");
 			}
 		} else {
-			player.message("&cUsage: /empire create (name)");
+			player.message("&cUsage: /em create (name)");
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "create";
+	}
+
+	@Override
+	public String getDescription() {
+		return "&eCreate a new Empire with the name of your choice";
 	}
 }

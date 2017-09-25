@@ -47,7 +47,7 @@ public class DisbandCommand implements ICommand {
 					}
 				} else {
 					player.message("&eDisbanding your empire is irreversible.");
-					player.message("&eType &a/empire disband confirm &eto confirm.");
+					player.message("&eType &a/em disband confirm &eto confirm.");
 				}
 			} else {
 				player.message("&cYou must own your empire to disband it.");
@@ -55,5 +55,15 @@ public class DisbandCommand implements ICommand {
 		} else {
 			player.message("&cYou must own an empire to invite players.");
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "disband";
+	}
+
+	@Override
+	public String getDescription() {
+		return "&eDisband your Empire; this removes all territory and kicks all members";
 	}
 }

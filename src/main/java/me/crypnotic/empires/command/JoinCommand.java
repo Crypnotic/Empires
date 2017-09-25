@@ -43,9 +43,9 @@ public class JoinCommand implements ICommand {
 						empire.addOnline(player);
 
 						player.setEmpire(empire);
-						
+
 						empire.broadcast("&a" + player.getName() + " &ehas joined the empire.");
-						
+
 						getEmpireManager().save(empire);
 						getPlayerManager().save(player);
 					} else {
@@ -58,7 +58,17 @@ public class JoinCommand implements ICommand {
 				player.message("&cYou're already a part of another empire.");
 			}
 		} else {
-			player.message("&cUsage: /empire join (name)");
+			player.message("&cUsage: /em join (name)");
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "join";
+	}
+
+	@Override
+	public String getDescription() {
+		return "&eJoin an Empire that you have been invited to";
 	}
 }

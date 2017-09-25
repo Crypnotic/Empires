@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 
 import me.crypnotic.empires.EmpiresPlugin;
 import me.crypnotic.empires.api.player.EmpirePlayer;
+import me.crypnotic.empires.manager.CommandManager;
 import me.crypnotic.empires.manager.ConfigManager;
 import me.crypnotic.empires.manager.EmpireManager;
 import me.crypnotic.empires.manager.PlayerManager;
@@ -37,8 +38,16 @@ public interface ICommand {
 
 	void execute(EmpirePlayer player, CommandContext context);
 
+	String getName();
+
+	String getDescription();
+
 	default EmpiresPlugin getPlugin() {
 		return EmpiresPlugin.getPlugin();
+	}
+
+	default CommandManager getCommandManager() {
+		return getPlugin().getCommandManager();
 	}
 
 	default ConfigManager getConfigManager() {

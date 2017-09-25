@@ -52,4 +52,14 @@ public class LeaveCommand implements ICommand {
 			player.message("&cYou are not a part of an empire.");
 		}
 	}
+
+	@Override
+	public String getName() {
+		return "leave";
+	}
+
+	@Override
+	public String getDescription() {
+		return "&eLeave your current Empire";
+	}
 }

@@ -31,6 +31,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import lombok.Getter;
 import me.crypnotic.empires.api.command.CommandContext;
 import me.crypnotic.empires.api.command.ICommand;
 import me.crypnotic.empires.api.player.EmpirePlayer;
@@ -45,6 +46,7 @@ import me.crypnotic.empires.command.LeaveCommand;
 public class CommandManager implements CommandExecutor {
 
 	private final PlayerManager playerManager;
+	@Getter
 	private final Map<String, ICommand> commands;
 
 	public CommandManager(PlayerManager playerManager) {
@@ -53,13 +55,17 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	public void init() {
-		commands.put("claim", new ClaimCommand());
-		commands.put("create", new CreateCommand());
-		commands.put("disband", new DisbandCommand());
-		commands.put("help", new HelpCommand());
-		commands.put("invite", new InviteCommand());
-		commands.put("join", new JoinCommand());
-		commands.put("leave", new LeaveCommand());
+		register(new ClaimCommand());
+		register(new CreateCommand());
+		register(new DisbandCommand());
+		register(new HelpCommand());
+		register(new InviteCommand());
+		register(new JoinCommand());
+		register(new LeaveCommand());
+	}
+
+	private void register(ICommand command) {
+		commands.put(command.getName(), command);
 	}
 
 	@Override
@@ -74,10 +80,10 @@ public class CommandManager implements CommandExecutor {
 					System.arraycopy(args, 1, arguments, 0, arguments.length);
 					commands.get(subcommand).execute(player, new CommandContext(arguments));
 				} else {
-					commands.get("help").execute(player, null);
+					commands.get("help").execute(player, new CommandContext(new String[0]));
 				}
 			} else {
-				commands.get("help").execute(player, null);
+				commands.get("help").execute(player, new CommandContext(new String[0]));
 			}
 		} else {
 			sender.sendMessage("Only players can use this command.");
