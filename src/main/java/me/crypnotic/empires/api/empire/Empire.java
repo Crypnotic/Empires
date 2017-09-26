@@ -39,6 +39,8 @@ public class Empire {
 	@Getter
 	private final UUID owner;
 	@Getter
+	private final double balance;
+	@Getter
 	private final Territory territory;
 	@Getter
 	private final Set<UUID> members;
@@ -47,10 +49,11 @@ public class Empire {
 	@Getter
 	private Set<EmpirePlayer> invites;
 
-	public Empire(String id, String name, UUID owner, Territory territory, Set<UUID> members) {
+	public Empire(String id, String name, UUID owner, double balance, Territory territory, Set<UUID> members) {
 		this.id = id;
 		this.name = name;
 		this.owner = owner;
+		this.balance = balance;
 		this.territory = territory;
 		this.members = members;
 		this.online = new HashSet<EmpirePlayer>();

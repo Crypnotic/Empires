@@ -60,10 +60,11 @@ public class EmpireManager {
 
 			String name = section.get("name").asString();
 			UUID owner = section.get("owner").asUUID();
+			Double balance = section.get("balance").asDouble();
 			Territory territory = Territory.deserialize(section.get("territory").asString());
 			Set<UUID> members = section.get("members").asUUIDSet();
 
-			Empire empire = new Empire(id, name, owner, territory, members);
+			Empire empire = new Empire(id, name, owner, balance, territory, members);
 
 			empires.put(id, empire);
 		}
@@ -76,7 +77,7 @@ public class EmpireManager {
 		if (empires.containsKey(id)) {
 			return null;
 		}
-		Empire empire = new Empire(id, name, owner, new Territory(new HashSet<Chunk>()), new HashSet<UUID>());
+		Empire empire = new Empire(id, name, owner, 0, new Territory(new HashSet<Chunk>()), new HashSet<UUID>());
 
 		empires.put(name, empire);
 
@@ -128,6 +129,7 @@ public class EmpireManager {
 
 		section.set("name", empire.getName());
 		section.set("owner", Strings.serializeUUID(empire.getOwner()));
+		section.set("balance", empire.getBalance());
 		section.set("territory", empire.getTerritory().serialize());
 		section.set("members", Strings.serializeUUIDSet(empire.getMembers()));
 
