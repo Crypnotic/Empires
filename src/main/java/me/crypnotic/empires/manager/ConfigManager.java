@@ -46,7 +46,7 @@ public class ConfigManager {
 		this.configs = new HashMap<ConfigType, Config>();
 	}
 
-	public Collection<Config> init() {
+	public Collection<ConfigType> init() {
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}
@@ -81,7 +81,7 @@ public class ConfigManager {
 				exception.printStackTrace();
 			}
 		}
-		return configs.values();
+		return configs.keySet();
 	}
 
 	public Config get(ConfigType type) {
