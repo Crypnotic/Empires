@@ -24,6 +24,7 @@
 package me.crypnotic.empires.command;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import me.crypnotic.empires.api.Strings;
@@ -34,6 +35,9 @@ import me.crypnotic.empires.api.player.EmpirePlayer;
 public class HelpCommand implements ICommand {
 
 	private static final int pageLimit = 7;
+	private static final Comparator<ICommand> sorter = (command1, command2) -> {
+		return command1.getName().compareToIgnoreCase(command2.getName());
+	};
 
 	@Override
 	public void execute(EmpirePlayer player, CommandContext context) {
@@ -68,9 +72,8 @@ public class HelpCommand implements ICommand {
 	}
 
 	private Collection<ICommand> getCommands(int page) {
-		return getCommandManager().stream().sorted((command1, command2) -> {
-			return command1.getName().compareToIgnoreCase(command2.getName());
-		}).skip(page * pageLimit).limit(pageLimit).collect(Collectors.toList());
+		return getCommandManager().stream().sorted(sorter).skip(page * pageLimit).limit(pageLimit)
+				.collect(Collectors.toList());
 	}
 
 	@Override
