@@ -33,6 +33,8 @@ import me.crypnotic.empires.api.player.EmpirePlayer;
 
 public class HelpCommand implements ICommand {
 
+	private static final int pageLimit = 7;
+
 	@Override
 	public void execute(EmpirePlayer player, CommandContext context) {
 		if (context.size() > 0) {
@@ -57,7 +59,7 @@ public class HelpCommand implements ICommand {
 				player.message(message.length() > 50 ? Strings.trim(message, 50) + "&e..." : message);
 			}
 
-			if (commands.size() == 5) {
+			if (commands.size() < pageLimit) {
 				player.message("&eType &a/em help " + (page + 1) + " &efor more commands.");
 			}
 		} else {
@@ -68,7 +70,7 @@ public class HelpCommand implements ICommand {
 	private Collection<ICommand> getCommands(int page) {
 		return getCommandManager().stream().sorted((command1, command2) -> {
 			return command1.getName().compareToIgnoreCase(command2.getName());
-		}).skip(page * 5).limit(5).collect(Collectors.toList());
+		}).skip(page * pageLimit).limit(pageLimit).collect(Collectors.toList());
 	}
 
 	@Override
