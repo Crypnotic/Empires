@@ -61,6 +61,11 @@ public class MechanicsListener implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		EmpirePlayer player = playerManager.get(event.getPlayer().getUniqueId());
+
+		player.setLastSeen(System.currentTimeMillis());
+
+		playerManager.save(player);
+
 		if (player.getEmpire() == null) {
 			return;
 		}

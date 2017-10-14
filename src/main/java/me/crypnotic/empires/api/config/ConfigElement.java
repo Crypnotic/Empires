@@ -46,6 +46,10 @@ public class ConfigElement {
 		return !exists() ? null : (Double) value;
 	}
 
+	public Long asLong() {
+		return !exists() ? null : (Long) value;
+	}
+
 	public String asString() {
 		return !exists() ? null : value.toString();
 	}

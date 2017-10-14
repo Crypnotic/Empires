@@ -84,6 +84,10 @@ public class PlayerManager {
 		if (section.contains("empire")) {
 			player.setEmpire(empireManager.getEmpireByName(section.get("empire").asString()));
 		}
+		
+		if (section.contains("lastSeen")) {
+			player.setLastSeen(section.get("lastSeen").asLong());
+		}
 
 		return player;
 	}

@@ -44,6 +44,9 @@ public class EmpirePlayer {
 	@Getter
 	@Setter
 	private Empire empire;
+	@Getter
+	@Setter
+	private Long lastSeen;
 	private Long lastWarning;
 
 	public Player getHandle() {
@@ -79,6 +82,9 @@ public class EmpirePlayer {
 		if (value instanceof EmpirePlayer) {
 			EmpirePlayer player = (EmpirePlayer) value;
 			return uuid.equals(player.getUuid());
+		}
+		if (value instanceof UUID) {
+			return uuid.equals(value);
 		}
 		return false;
 	}
