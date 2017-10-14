@@ -26,15 +26,16 @@ package me.crypnotic.empires.api.config;
 import java.util.Set;
 import java.util.UUID;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import me.crypnotic.empires.api.Strings;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConfigElement {
 
 	private final Object value;
 
-	public Object raw() {
+	public Object get() {
 		return value;
 	}
 
@@ -64,5 +65,9 @@ public class ConfigElement {
 
 	public boolean exists() {
 		return value != null;
+	}
+
+	public static ConfigElement of(Object value) {
+		return new ConfigElement(value);
 	}
 }

@@ -29,19 +29,19 @@ import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ConfigSection {
 
 	@Getter
-	private final YamlConfiguration configuration;
+	protected YamlConfiguration configuration;
 	@Getter
 	private final String track;
 
 	public ConfigElement get(String path) {
-		return new ConfigElement(configuration.get(track + "." + path));
+		return ConfigElement.of(configuration.get(track + "." + path));
 	}
 
 	public void set(String path, Object value) {

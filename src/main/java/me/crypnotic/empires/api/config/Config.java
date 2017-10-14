@@ -34,19 +34,16 @@ public class Config extends ConfigSection {
 
 	@Getter
 	private final File file;
-	@Getter
-	private YamlConfiguration config;
 
 	public Config(File file, YamlConfiguration config) {
 		super(config, "");
-		
+
 		this.file = file;
-		this.config = config;
 	}
 
 	public boolean save() {
 		try {
-			config.save(file);
+			super.getConfiguration().save(file);
 			return true;
 		} catch (IOException exception) {
 			exception.printStackTrace();
@@ -56,7 +53,7 @@ public class Config extends ConfigSection {
 
 	public boolean reload() {
 		try {
-			this.config = YamlConfiguration.loadConfiguration(file);
+			super.configuration = YamlConfiguration.loadConfiguration(file);
 			return true;
 		} catch (IllegalArgumentException exception) {
 			exception.printStackTrace();
